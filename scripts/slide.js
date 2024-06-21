@@ -9,17 +9,17 @@ export default class Slide{
         }
     }
 
-    moveSlide(distX){
-        this.distance.movePosition = distX
+    moveSlide(distX){ // Método que altera o valor de transform translate3d dos slides, fazendo com que se movam.
+        this.distance.movePosition = distX 
         this.slide.style.transform = `translate3d(${distX}px, 0, 0)`
     }
 
-    updatePsition(positionX){
-        this.distance.movement = (this.distance.startX - positionX) * 1.5
+    updatePosition(positionX){ // Retorna o quanto de movimentação o usuario realizou na tela.
+        this.distance.movement = (this.distance.startX - positionX) * 1.5 
         return this.distance.finalPosition - this.distance.movement
     }
 
-    start(event){
+    start(event){ // Método verifica se o evento disparado foi pelo mouse ou pelo touch e determina onde que o movimento se iniciou. 
         let moveType
         if (event.type === 'mousedown'){
             event.preventDefault()
@@ -29,29 +29,29 @@ export default class Slide{
             this.distance.startX = event.changedTouches[0].clientX
             moveType = 'touchmove'
         }
-        this.container.addEventListener(moveType, this.onMove)
+        this.container.addEventListener(moveType, this.onMove) // O Método tambêm adiciona um evento que é disparado conforme a movimentação do user na tela.
     }
 
-    onMove(event){
+    onMove(event){ // Método verifica a posição atual do mouse ou do touch.
         const pointerPosition = (event.type === 'mousemove') ? event.clientX : event.changedTouches[0].clientX
-        const finalPosition = this.updatePsition(pointerPosition)
+        const finalPosition = this.updatePosition(pointerPosition)
         this.moveSlide(finalPosition)
     }
 
-    end(event){
+    end(event){ // Método retira o evento adicionado no método 'start' e atualiza no objeto 'distance' a posição final.
         const moveType = (event.type === 'mouseup') ? 'mousemove' : 'touchmove'
         this.container.removeEventListener(moveType, this.onMove)
         this.distance.finalPosition = this.distance.movePosition
     }
 
-    addSlideEvents(){
+    addSlideEvents(){ // Método que adiciona os eventos que vão disparar as funções dos slides.
         this.container.addEventListener('mousedown', this.start)
         this.container.addEventListener('touchstart', this.start)
         this.container.addEventListener('mouseup', this.end)
         this.container.addEventListener('touchend', this.end)
     }
 
-    bindEvents(){
+    bindEvents(){ // Método para determinar que ao chamar o 'this' dentro dos métodos de 'start', 'end', e 'onMove' o resultado seja essa própria class.
         this.start = this.start.bind(this)
         this.end = this.end.bind(this)
         this.onMove = this.onMove.bind(this)
@@ -59,19 +59,19 @@ export default class Slide{
 
     // Configuração Array Slides
 
-    slidesPosition(i){
+    slidesPosition(i){ //Pega o parâmetro selecionado e retorna a largura da tela - a do parâmetro e então a divide por 2, resultando no espaço que deve ficar de cada lado. 
         const margin = (this.container.offsetWidth - i.offsetWidth) / 2
         return -(i.offsetLeft - margin)
     }
 
-    slidesArray(){
+    slidesArray(){ // Método cria uma array que possui cada elemento do slide individual e sua posição.
         this.slideArray = [...this.slide.children].map((element) =>{
             const position = this.slidesPosition(element)
             return { position, element }
         })
     }
     
-    slidesIndexNav(index){
+    slidesIndexNav(index){ // Método declara uma variável que possui o index do slide ativo, anterior e posterior.
         const last = this.slideArray.length - 1
         this.index = {
             previous: index ? index - 1 : undefined,
@@ -80,7 +80,7 @@ export default class Slide{
         }
     }
 
-    chooseSlide(index){
+    chooseSlide(index){ //Método movimenta os slides para o escolhido com base em seu index.
         const activeSlide = this.slideArray[index]
         this.moveSlide(activeSlide.position)
         this.slidesIndexNav(index)
