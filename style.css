@@ -21,4 +21,5 @@ img{
     flex-shrink: 0;
     max-width: 200px;
     margin: 0 20px;
+    /* width: 80vw; */
 }
