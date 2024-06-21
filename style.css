@@ -1,5 +1,9 @@
 body{
     margin: 0;
+    background-color: black;
+    color: white;
+    font-weight: bolder;
+    text-align: center;
 }
 ul{
     margin: 0;
@@ -11,6 +15,15 @@ img{
     max-width: 100%;
 }
 
+.title{
+    font-size: 1.1rem;
+}
+.title span{
+    font-size: 2.5rem;
+    color: rgb(60, 209, 60);
+    text-decoration: underline;
+}
+
 .container_slide{
     overflow: hidden;
 }
@@ -18,8 +31,29 @@ img{
     display: flex;
 }
 .slide li{
+    border: 5px solid rgb(60, 209, 60);
+    border-radius: 4px;
+    display: flex;
+    max-width: auto;
+    font-size: 2rem;
     flex-shrink: 0;
-    max-width: 200px;
-    margin: 0 20px;
-    /* width: 80vw; */
+    margin: 10px 20px;
+    gap: 10px;
+    padding: 10px;
+    background-color: rgb(1, 20, 8);
+}
+
+.slide div{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    max-width: 1000px;
+}
+
+.slide p{
+    text-align: justify;
+}
+.slide h3{
+    text-align: center;
 }
