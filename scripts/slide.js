@@ -9,13 +9,17 @@ export default class Slide{
         }
     }
 
+    transition(active){
+        this.slide.style.transition = active ? 'transform .9s' : ''
+    }
+
     moveSlide(distX){ // Método que altera o valor de transform translate3d dos slides, fazendo com que se movam.
         this.distance.movePosition = distX 
         this.slide.style.transform = `translate3d(${distX}px, 0, 0)`
     }
 
     updatePosition(positionX){ // Retorna o quanto de movimentação o usuario realizou na tela.
-        this.distance.movement = (this.distance.startX - positionX) * 1.5 
+        this.distance.movement = (this.distance.startX - positionX) * 1.65 
         return this.distance.finalPosition - this.distance.movement
     }
 
@@ -30,6 +34,7 @@ export default class Slide{
             moveType = 'touchmove'
         }
         this.container.addEventListener(moveType, this.onMove) // O Método tambêm adiciona um evento que é disparado conforme a movimentação do user na tela.
+        this.transition(false)
     }
 
     onMove(event){ // Método verifica a posição atual do mouse ou do touch.
@@ -42,6 +47,21 @@ export default class Slide{
         const moveType = (event.type === 'mouseup') ? 'mousemove' : 'touchmove'
         this.container.removeEventListener(moveType, this.onMove)
         this.distance.finalPosition = this.distance.movePosition
+        this.transition(true)
+        this.changeSlideOnEnd()
+    }
+
+    changeSlideOnEnd(){
+        console.log(this.distance.movement)
+        if(this.distance.movement > 350 && this.index.next !== undefined){
+            this.activeNextSlide()
+            if(this.distance.movement > 1150) this.activeNextSlide()
+        } else if(this.distance.movement < -350 && this.index.previous !== undefined){
+            this.activePreviousSlide()
+            if(this.distance.movement < -1150) this.activePreviousSlide()
+        } else{
+            this.chooseSlide(this.index.active)
+        }
     }
 
     addSlideEvents(){ // Método que adiciona os eventos que vão disparar as funções dos slides.
@@ -87,8 +107,17 @@ export default class Slide{
         this.distance.finalPosition = activeSlide.position
     }
 
+    activePreviousSlide(){
+        if(this.index.previous !== undefined) this.chooseSlide(this.index.previous)
+    }
+
+    activeNextSlide(){
+        if(this.index.next !== undefined) this.chooseSlide(this.index.next)
+    }
+
     initFunctions(){
         this.bindEvents()
+        this.transition(true)
         this.addSlideEvents()
         this.slidesArray()
         return this
