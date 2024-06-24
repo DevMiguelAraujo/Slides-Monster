@@ -122,6 +122,8 @@ export class Slide{
         }, 1000)
     }
 
+    // Configurações iniciais e de responsividade
+
     addResizeEvent(){  // Faz com que toda vez que a tela tenha seu tamanho alterado, um evento seja disparado.
         addEventListener('resize', this.onResize)
     }
@@ -140,6 +142,7 @@ export class Slide{
         this.transition(true)
         this.addSlideEvents()
         this.slidesArray()
+        this.addControl()
         this.addResizeEvent()
         this.chooseSlide(0)
         return this
@@ -147,11 +150,23 @@ export class Slide{
 }
 
 export class SlideNav extends Slide{
+    // Super bindEvents e changeSlide
     bindEvents(){
         super.bindEvents()
         this.addArrow = this.addArrow.bind(this)
         this.addArrowEvent = this.addArrowEvent.bind(this)
+        this.eventControl = this.eventControl.bind(this)
+        this.changeActiveSlide = this.changeActiveSlide.bind(this)
     }
+
+    changeActiveSlide(){
+        super.changeActiveSlide()
+        this.controlArray.forEach(i => i.style.background = 'rgb(7, 122, 7)')
+        this.controlArray[this.index.active].style.background = 'rgb(128, 245, 128)'
+    }
+
+    //Sistema de navegação por arrows
+
     addArrow(prev, next){
         this.prevButton = document.querySelector(prev)
         this.nextButton = document.querySelector(next)
@@ -160,5 +175,33 @@ export class SlideNav extends Slide{
     addArrowEvent(){
         this.prevButton.addEventListener('click', this.activePreviousSlide)
         this.nextButton.addEventListener('click', this.activeNextSlide)
+    }
+
+    // Criação de lista de controles.
+
+    createControl(){
+        const control = document.createElement('ul')
+        control.dataset.control = 'slide'
+        this.slideArray.forEach((item, index) => {
+            control.innerHTML += `<li><a href="${index+1}"></a></li>`
+        })
+        this.container.appendChild(control)
+        return control
+    }
+
+    eventControl(item, index){
+        item.addEventListener('click', (event)=>{
+            event.preventDefault()
+            this.chooseSlide(index)
+            this.lastLi = item
+        })
+    }
+
+    addControl(){
+        this.control = this.createControl()
+        this.controlArray = [...this.control.children]
+        this.controlArray.forEach((item, index) => {
+            this.eventControl(item, index)
+        })
     }
 }

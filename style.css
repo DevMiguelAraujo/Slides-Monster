@@ -112,3 +112,22 @@ img{
 .left{
     transform: rotate(135deg);
 }
+
+[data-control='slide']{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+[data-control='slide'] li{
+    background-color: rgb(7, 122, 7);
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+}
+
+[data-control='slide'] li:hover{
+    cursor: pointer;
+    background-color: rgb(128, 245, 128);
+}
