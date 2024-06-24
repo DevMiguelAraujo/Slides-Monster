@@ -7,9 +7,10 @@ export default class Slide{
             startX: 0, 
             movement: 0
         }
+        this.activeClass = 'active'
     }
 
-    transition(active){
+    transition(active){ // Ativa o estilo CSS de transform, para que o movimento seja suavizado.
         this.slide.style.transition = active ? 'transform .9s' : ''
     }
 
@@ -51,8 +52,7 @@ export default class Slide{
         this.changeSlideOnEnd()
     }
 
-    changeSlideOnEnd(){
-        console.log(this.distance.movement)
+    changeSlideOnEnd(){ // Método que escolhe qual vai ser o próximo slide com base no valor de movimento.
         if(this.distance.movement > 350 && this.index.next !== undefined){
             this.activeNextSlide()
             if(this.distance.movement > 1150) this.activeNextSlide()
@@ -69,12 +69,6 @@ export default class Slide{
         this.container.addEventListener('touchstart', this.start)
         this.container.addEventListener('mouseup', this.end)
         this.container.addEventListener('touchend', this.end)
-    }
-
-    bindEvents(){ // Método para determinar que ao chamar o 'this' dentro dos métodos de 'start', 'end', e 'onMove' o resultado seja essa própria class.
-        this.start = this.start.bind(this)
-        this.end = this.end.bind(this)
-        this.onMove = this.onMove.bind(this)
     }
 
     // Configuração Array Slides
@@ -105,6 +99,12 @@ export default class Slide{
         this.moveSlide(activeSlide.position)
         this.slidesIndexNav(index)
         this.distance.finalPosition = activeSlide.position
+        this.changeActiveSlide()
+    }
+
+    changeActiveSlide(){ // Alterna o elemento que possui a class active.
+        this.slideArray.forEach(i => i.element.classList.remove(this.activeClass))
+        this.slideArray[this.index.active].element.classList.add(this.activeClass)
     }
 
     activePreviousSlide(){
@@ -115,11 +115,30 @@ export default class Slide{
         if(this.index.next !== undefined) this.chooseSlide(this.index.next)
     }
 
+    onResize(){ // Após o tempo de 1 segundo, tefaz as posições dos slides.
+        setTimeout(() =>{
+            this.slidesArray()
+            this.chooseSlide(this.index.active)
+        }, 1000)
+    }
+
+    addResizeEvent(){  // Faz com que toda vez que a tela tenha seu tamanho alterado, um evento seja disparado.
+        addEventListener('resize', this.onResize)
+    }
+
+    bindEvents(){ // Método para determinar que ao chamar o 'this' dentro dos métodos listados o resultado seja essa própria class.
+        this.start = this.start.bind(this)
+        this.end = this.end.bind(this)
+        this.onMove = this.onMove.bind(this)
+        this.onResize = this.onResize.bind(this)
+    }
+
     initFunctions(){
         this.bindEvents()
         this.transition(true)
         this.addSlideEvents()
         this.slidesArray()
+        this.addResizeEvent()
         return this
     }
 }
