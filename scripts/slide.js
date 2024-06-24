@@ -1,4 +1,4 @@
-export default class Slide{
+export class Slide{
     constructor(slide, container){
         this.slide = document.querySelector(slide)
         this.container = document.querySelector(container)
@@ -131,6 +131,8 @@ export default class Slide{
         this.end = this.end.bind(this)
         this.onMove = this.onMove.bind(this)
         this.onResize = this.onResize.bind(this)
+        this.activeNextSlide = this.activeNextSlide.bind(this)
+        this.activePreviousSlide = this.activePreviousSlide.bind(this)
     }
 
     initFunctions(){
@@ -139,6 +141,24 @@ export default class Slide{
         this.addSlideEvents()
         this.slidesArray()
         this.addResizeEvent()
+        this.chooseSlide(0)
         return this
+    }    
+}
+
+export class SlideNav extends Slide{
+    bindEvents(){
+        super.bindEvents()
+        this.addArrow = this.addArrow.bind(this)
+        this.addArrowEvent = this.addArrowEvent.bind(this)
+    }
+    addArrow(prev, next){
+        this.prevButton = document.querySelector(prev)
+        this.nextButton = document.querySelector(next)
+        this.addArrowEvent()
+    }
+    addArrowEvent(){
+        this.prevButton.addEventListener('click', this.activePreviousSlide)
+        this.nextButton.addEventListener('click', this.activeNextSlide)
     }
 }

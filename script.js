@@ -1,6 +1,7 @@
-import Slide from './scripts/slide.js'
+import {SlideNav} from './scripts/slide.js'
 
-const slide = new Slide('.slide', '.container_slide')
+const slide = new SlideNav('.slide', '.container_slide')
 
 slide.initFunctions()
-slide.chooseSlide(0)
+slide.slidesIndexNav(0)
+slide.addArrow('.left', '.right')
