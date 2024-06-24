@@ -82,3 +82,33 @@ img{
     opacity: 1 !important;
     transform: scale(1) !important;
 }
+
+.button_slide{
+    display: flex;
+    padding: 0 50px;
+    justify-content: space-between;
+}
+
+.bg_button{
+    background-color: rgb(1, 36, 1);
+    padding: 20px;
+    border-radius: 50%;
+}
+
+.arrow{
+    border: solid rgb(60, 209, 60);
+    border-width: 0 20px 20px 0;
+    display: inline-block;
+    padding: 20px;
+}
+
+.arrow:hover{
+    cursor: pointer;
+}
+
+.right{
+    transform: rotate(-45deg);
+}
+.left{
+    transform: rotate(135deg);
+}
