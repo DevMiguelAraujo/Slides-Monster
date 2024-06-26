@@ -8,6 +8,13 @@ export class Slide{
             movement: 0
         }
         this.activeClass = 'active'
+        this.stylesDivSlide = {
+            overflow: 'hidden',
+        }
+        this.stylesUlSlide = {
+            display: 'flex',
+            margin: '50px 0 0 0'
+        }
     }
 
     transition(active){ // Ativa o estilo CSS de transform, para que o movimento seja suavizado.
@@ -54,11 +61,11 @@ export class Slide{
 
     changeSlideOnEnd(){ // Método que escolhe qual vai ser o próximo slide com base no valor de movimento.
         if(this.distance.movement > 350 && this.index.next !== undefined){
-            this.activeNextSlide()
-            if(this.distance.movement > 1150) this.activeNextSlide()
+            this.movingSlide(true)
+            if(this.distance.movement > 1150) this.movingSlide(true)
         } else if(this.distance.movement < -350 && this.index.previous !== undefined){
-            this.activePreviousSlide()
-            if(this.distance.movement < -1150) this.activePreviousSlide()
+            this.movingSlide(false)
+            if(this.distance.movement < -1150) this.movingSlide(false)
         } else{
             this.chooseSlide(this.index.active)
         }
@@ -69,6 +76,12 @@ export class Slide{
         this.container.addEventListener('touchstart', this.start)
         this.container.addEventListener('mouseup', this.end)
         this.container.addEventListener('touchend', this.end)
+        addEventListener('resize', () => {
+            setTimeout(() =>{
+                this.slidesArray()
+                this.chooseSlide(this.index.active)
+            }, 750)
+        }) // Faz com que toda vez que a tela tenha seu tamanho alterado, um evento seja disparado.
     }
 
     // Configuração Array Slides
@@ -107,43 +120,28 @@ export class Slide{
         this.slideArray[this.index.active].element.classList.add(this.activeClass)
     }
 
-    activePreviousSlide(){
-        if(this.index.previous !== undefined) this.chooseSlide(this.index.previous)
+    movingSlide(boolean){
+        if((boolean) && (this.index.next !== undefined)) this.chooseSlide(this.index.next)
+        if((!boolean) && (this.index.previous !== undefined)) this.chooseSlide(this.index.previous)
     }
 
-    activeNextSlide(){
-        if(this.index.next !== undefined) this.chooseSlide(this.index.next)
-    }
-
-    onResize(){ // Após o tempo de 1 segundo, tefaz as posições dos slides.
-        setTimeout(() =>{
-            this.slidesArray()
-            this.chooseSlide(this.index.active)
-        }, 1000)
-    }
-
-    // Configurações iniciais e de responsividade
-
-    addResizeEvent(){  // Faz com que toda vez que a tela tenha seu tamanho alterado, um evento seja disparado.
-        addEventListener('resize', this.onResize)
-    }
+    // Configurações iniciais.
 
     bindEvents(){ // Método para determinar que ao chamar o 'this' dentro dos métodos listados o resultado seja essa própria class.
         this.start = this.start.bind(this)
         this.end = this.end.bind(this)
         this.onMove = this.onMove.bind(this)
-        this.onResize = this.onResize.bind(this)
-        this.activeNextSlide = this.activeNextSlide.bind(this)
-        this.activePreviousSlide = this.activePreviousSlide.bind(this)
+        this.movingSlide = this.movingSlide.bind(this)
     }
 
     initFunctions(){
+        Object.assign(this.container.style, this.stylesDivSlide)
+        Object.assign(this.slide.style, this.stylesUlSlide)
         this.bindEvents()
         this.transition(true)
         this.addSlideEvents()
         this.slidesArray()
         this.addControl()
-        this.addResizeEvent()
         this.chooseSlide(0)
         return this
     }    
@@ -173,8 +171,8 @@ export class SlideNav extends Slide{
         this.addArrowEvent()
     }
     addArrowEvent(){
-        this.prevButton.addEventListener('click', this.activePreviousSlide)
-        this.nextButton.addEventListener('click', this.activeNextSlide)
+        this.prevButton.addEventListener('click', () => this.movingSlide(false))
+        this.nextButton.addEventListener('click', () => this.movingSlide(true))
     }
 
     // Criação de lista de controles.
@@ -182,9 +180,7 @@ export class SlideNav extends Slide{
     createControl(){
         const control = document.createElement('ul')
         control.dataset.control = 'slide'
-        this.slideArray.forEach((item, index) => {
-            control.innerHTML += `<li><a href="${index+1}"></a></li>`
-        })
+        this.slideArray.forEach((item, index) => control.innerHTML += `<li><a href="${index+1}"></a></li>`)
         this.container.appendChild(control)
         return control
     }
